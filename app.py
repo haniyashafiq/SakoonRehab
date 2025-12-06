@@ -36,11 +36,17 @@ def ensure_initial_admin():
                 'username': 'ImranSaab',
                 'password': generate_password_hash('password123'),
                 'role': 'Admin',
-                'name': 'Imran Khan (Admin)',
+                'name': 'Imran Khan',
                 'created_at': datetime.now()
             }
             mongo.db.users.insert_one(admin_user)
             print("Initial Admin user 'ImranSaab' created.")
+        else:
+            # Ensure the admin user has the correct name (in case of previous incorrect setup)
+            mongo.db.users.update_one(
+                {"username": "ImranSaab"}, 
+                {"$set": {"name": "Imran Khan"}}
+            )
 
 # Run initial setup outside of request context
 with app.app_context():
