@@ -102,10 +102,13 @@ def logout():
 @app.route('/api/auth/session', methods=['GET'])
 def check_session():
     if 'user_id' in session:
+        # Fetch user from database to get the name
+        user = mongo.db.users.find_one({"_id": ObjectId(session['user_id'])})
         return jsonify({
             "is_logged_in": True,
             "username": session.get('username'),
             "role": session.get('role'),
+            "name": user.get('name', session.get('username')) if user else session.get('username')
         })
     return jsonify({"is_logged_in": False})
 
